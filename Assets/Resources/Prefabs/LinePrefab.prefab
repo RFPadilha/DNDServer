@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8234645039334997936}
   - component: {fileID: 8349485437758213108}
   - component: {fileID: 7989383773469658978}
+  - component: {fileID: 2851143766173543248}
   m_Layer: 6
   m_Name: LinePrefab
   m_TagString: Untagged
@@ -178,3 +179,15 @@ EdgeCollider2D:
   m_AdjacentEndPoint: {x: 0, y: 0}
   m_UseAdjacentStartPoint: 0
   m_UseAdjacentEndPoint: 0
+--- !u!210 &2851143766173543248
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4881502937172487008}
+  m_Enabled: 1
+  m_SortingLayerID: -656229769
+  m_SortingLayer: 3
+  m_SortingOrder: 0
+  m_SortAtRoot: 0

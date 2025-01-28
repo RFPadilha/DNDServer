@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems; // Importar para checar se o mouse está sobre um UI element
 
 public class LineDrawer : MonoBehaviour
 {
@@ -11,6 +12,12 @@ public class LineDrawer : MonoBehaviour
 
     void Update()
     {
+        // Verifica se o mouse está sobre um UI element
+        if (EventSystem.current.IsPointerOverGameObject())
+        {
+            return; // Se o mouse estiver sobre um UI, não desenha
+        }
+
         // Verifica se o usuário está clicando com o botão esquerdo para adicionar pontos
         if (Input.GetMouseButtonDown(0))
         {
@@ -41,6 +48,12 @@ public class LineDrawer : MonoBehaviour
             mousePos = new Vector3(mousePos.x, mousePos.y, 0f);
             AddPoint(mousePos);
             CloseShape();
+        }
+
+        // Cancela o desenho atual se "Escape" for pressionado
+        if (Input.GetKeyDown(KeyCode.Escape) && isDrawing)
+        {
+            CancelDrawing();
         }
     }
 
@@ -104,7 +117,6 @@ public class LineDrawer : MonoBehaviour
     }
 
     // Fecha a forma ao conectar o primeiro e o último pontos
-    // Fecha a forma ao conectar o primeiro e o último pontos
     void CloseShape()
     {
         points.Add(points[0]); // Conecta o último ponto ao primeiro
@@ -121,5 +133,11 @@ public class LineDrawer : MonoBehaviour
         isDrawing = false;
     }
 
-
+    // Cancela o desenho atual sem afetar as linhas já desenhadas
+    void CancelDrawing()
+    {
+        Destroy(currentLineRenderer.gameObject); // Remove a linha atual
+        points.Clear(); // Limpa os pontos
+        isDrawing = false; // Cancela o estado de desenho
+    }
 }
