@@ -4,22 +4,19 @@ using UnityEngine;
 
 public class Token : MonoBehaviour
 {
-    private GridManager gridManager;
+    private int row, col; // Grid position
 
-    void Start()
+    // Set the grid position for the token
+    public void SetGridPosition(int r, int c)
     {
-        // Pega a referência do GridManager
-        gridManager = FindObjectOfType<GridManager>();
+        row = r;
+        col = c;
     }
 
-    // Método para mover o token para uma célula na grid
-    public void MoveToPosition(Vector2 worldPosition)
+    // Get the token's grid position (row, col)
+    public Vector2 GetGridPosition()
     {
-        // Converte a posição mundial para a célula mais próxima
-        Vector2 cellPosition = gridManager.GetNearestCellPosition(worldPosition);
-
-        // Move o token para a célula
-        transform.position = new Vector3(cellPosition.x, cellPosition.y, 0);
+        return new Vector2(row, col);
     }
 }
 
