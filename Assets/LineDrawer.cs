@@ -22,7 +22,8 @@ public class LineDrawer : MonoBehaviour
             else
             {
                 // Adiciona o ponto final ou outro ponto se a tecla Shift estiver pressionada
-                Vector2 mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+                Vector2 mousePos = mainCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, mainCamera.nearClipPlane));
+                mousePos = new Vector3(mousePos.x, mousePos.y, 0f);
                 AddPoint(mousePos);
             }
         }
@@ -36,6 +37,9 @@ public class LineDrawer : MonoBehaviour
         // Botão direito fecha a geometria (se houver 3 ou mais pontos)
         if (Input.GetMouseButtonDown(1) && points.Count >= 3)
         {
+            Vector2 mousePos = mainCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, mainCamera.nearClipPlane));
+            mousePos = new Vector3(mousePos.x, mousePos.y, 0f);
+            AddPoint(mousePos);
             CloseShape();
         }
     }
@@ -47,7 +51,9 @@ public class LineDrawer : MonoBehaviour
         currentLineRenderer = line.GetComponent<LineRenderer>();
 
         points.Clear();
-        Vector2 mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 mousePos = mainCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, mainCamera.nearClipPlane));
+        mousePos = new Vector3(mousePos.x, mousePos.y, 0f);
+
         points.Add(mousePos);
         points.Add(mousePos); // Inicialmente, o ponto final é o mesmo que o inicial
 
@@ -87,7 +93,9 @@ public class LineDrawer : MonoBehaviour
     // Atualiza o ponto final da linha conforme o mouse se move
     void UpdateEndPoint()
     {
-        Vector2 mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 mousePos = mainCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, mainCamera.nearClipPlane));
+        mousePos = new Vector3(mousePos.x, mousePos.y, 0f);
+
         currentLineRenderer.SetPosition(currentLineRenderer.positionCount - 1, mousePos);
 
         // Atualiza o EdgeCollider2D com o ponto temporário
@@ -96,16 +104,22 @@ public class LineDrawer : MonoBehaviour
     }
 
     // Fecha a forma ao conectar o primeiro e o último pontos
+    // Fecha a forma ao conectar o primeiro e o último pontos
     void CloseShape()
     {
         points.Add(points[0]); // Conecta o último ponto ao primeiro
         currentLineRenderer.positionCount++;
         currentLineRenderer.SetPosition(currentLineRenderer.positionCount - 1, points[0]);
 
-        // Atualiza o EdgeCollider2D para fechar a forma
+        // Atualiza o EdgeCollider2D para incluir o ponto final
         EdgeCollider2D edgeCollider = currentLineRenderer.GetComponent<EdgeCollider2D>();
-        edgeCollider.points = points.ToArray();
+
+        // Atualiza a lista de pontos no EdgeCollider2D, incluindo o ponto final
+        List<Vector2> colliderPoints = new List<Vector2>(points);
+        edgeCollider.points = colliderPoints.ToArray();
 
         isDrawing = false;
     }
+
+
 }
