@@ -1,38 +1,57 @@
 using UnityEngine;
-using UnityEngine.UI;
+using TMPro;
 
 public class MapScaler : MonoBehaviour
 {
     public GameObject mapObject; // Referência ao objeto do mapa que será escalado
-    public Slider scaleSlider;   // Slider de UI para ajustar a escala
+    public TMP_InputField widthInputField; // Campo de input para a largura
+    public TMP_InputField heightInputField; // Campo de input para a altura
     private SpriteRenderer mapRenderer;
+
+    private float originalWidth;
+    private float originalHeight;
 
     void Start()
     {
         // Pega o SpriteRenderer do mapa
         mapRenderer = mapObject.GetComponent<SpriteRenderer>();
 
-        // Configura um listener para o slider, para ajustar a escala dinamicamente
-        scaleSlider.onValueChanged.AddListener(AdjustMapScale);
+        // Armazena as dimensões originais do mapa
+        originalWidth = mapRenderer.sprite.bounds.size.x;
+        originalHeight = mapRenderer.sprite.bounds.size.y;
 
-        // Define um valor inicial de escala no slider
-        scaleSlider.value = 1; // Valor padrão 1:1
+        // Configura o listener para os campos de input
+        widthInputField.onEndEdit.AddListener(OnWidthChanged);
+        heightInputField.onEndEdit.AddListener(OnHeightChanged);
 
-        // Ajusta a escala inicial ao carregar o mapa
-        SetInitialMapScale();
+        // Ajusta os valores iniciais de largura e altura
+        SetInitialMapDimensions();
     }
 
-    // Método chamado quando o slider é alterado
-    public void AdjustMapScale(float newScale)
+    // Define as dimensões iniciais do mapa (com base na escala padrão)
+    void SetInitialMapDimensions()
     {
-        // Ajusta a escala do objeto do mapa
-        mapObject.transform.localScale = new Vector3(newScale, newScale, 1);
+        float initialScale = 1f; // Escala inicial de 75%
+        widthInputField.text = (originalWidth * initialScale).ToString();
+        heightInputField.text = (originalHeight * initialScale).ToString();
     }
 
-    // Método para ajustar a escala inicial do mapa
-    public void SetInitialMapScale()
+    // Ajusta a largura e altura com base no valor inserido no campo de input
+    void OnWidthChanged(string value)
     {
-        // Define uma escala padrão de 75% do tamanho original
-        mapObject.transform.localScale = new Vector3(0.75f, 0.75f, 1);
+        if (float.TryParse(value, out float newWidth) && newWidth > 0)
+        {
+            float scale = newWidth / originalWidth;
+            mapObject.transform.localScale = new Vector3(scale, mapObject.transform.localScale.y, 1);
+        }
+    }
+
+    void OnHeightChanged(string value)
+    {
+        if (float.TryParse(value, out float newHeight) && newHeight > 0)
+        {
+            float scale = newHeight / originalHeight;
+            mapObject.transform.localScale = new Vector3(mapObject.transform.localScale.x, scale, 1);
+        }
     }
 }
