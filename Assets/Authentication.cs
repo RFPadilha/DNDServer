@@ -11,7 +11,7 @@ public class Authentication : MonoBehaviour
     private async void Start()
     {
         await UnityServices.InitializeAsync();
-        Debug.Log(UnityServices.State);
+        //Debug.Log(UnityServices.State);
 
         SetupEvents();
         await SignInAnonymouslyAsync();
@@ -21,21 +21,21 @@ public class Authentication : MonoBehaviour
     {
         AuthenticationService.Instance.SignedIn += () =>
         {
-            Debug.Log($"Player ID: {AuthenticationService.Instance.PlayerId}");
-            Debug.Log($"Access Token: {AuthenticationService.Instance.AccessToken}");
+            //Debug.Log($"Player ID: {AuthenticationService.Instance.PlayerId}");
+            //Debug.Log($"Access Token: {AuthenticationService.Instance.AccessToken}");
         };
 
         AuthenticationService.Instance.SignInFailed += (err) =>
         {
-            Debug.LogError($"Player ID: {err}");
+            //Debug.LogError($"Player ID: {err}");
         };
         AuthenticationService.Instance.SignedOut += () =>
         {
-            Debug.Log($"Signed out player ID: {AuthenticationService.Instance.PlayerId}");
+            //Debug.Log($"Signed out player ID: {AuthenticationService.Instance.PlayerId}");
         };
         AuthenticationService.Instance.Expired += () =>
         {
-            Debug.Log("Player session could not be refreshed and expired.");
+            //Debug.Log("Player session could not be refreshed and expired.");
         };
     }
     private async Task SignInAnonymouslyAsync()
@@ -43,17 +43,17 @@ public class Authentication : MonoBehaviour
         try
         {
             await AuthenticationService.Instance.SignInAnonymouslyAsync();
-            Debug.Log($"Anon SignIn succeeded");
+            //Debug.Log($"Anon SignIn succeeded");
 
-            Debug.Log($"Access Token: {AuthenticationService.Instance.PlayerId}");
+            //Debug.Log($"Access Token: {AuthenticationService.Instance.PlayerId}");
         }
         catch (AuthenticationException ex)
         {
-            Debug.LogException(ex);
+            //Debug.LogException(ex);
         }
         catch (RequestFailedException ex)
         {
-            Debug.LogException(ex);
+            //Debug.LogException(ex);
         }
     }
 }

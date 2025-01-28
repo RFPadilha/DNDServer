@@ -3,45 +3,44 @@ using UnityEngine;
 
 public class FogOfWar : MonoBehaviour
 {
-    public GameObject fogOfWarPlane; // Objeto para a névoa de guerra (um objeto escuro cobrindo o tabuleiro)
-    public LayerMask obstacleLayer; // Camada para as linhas/obstáculos desenhadas
-    public float viewRadius = 5f; // Raio da visão de cada jogador
-    public int viewAngle = 360; // Ângulo de visão (360 para visão completa em todas as direções)
-    public int raysCount = 100; // Número de raios emitidos para calcular a área visível
+    public GameObject fogOfWarPrefab; // Prefab for the fog of war mesh (each player will get one)
+    public LayerMask obstacleLayer; // Layer mask for obstacles
+    public float viewRadius = 5f; // Radius of vision for each player
+    public float viewAngle = 360; // Full circle of vision
+    public float raysCount = 100; // Number of rays used to calculate vision
 
-    public List<Transform> players; // Lista dos jogadores no tabuleiro
-
-    private Mesh fogMesh;
-    private Vector3[] vertices;
-    private int[] triangles;
+    public List<Transform> players; // List of players
+    private Dictionary<Transform, Mesh> playerMeshes = new Dictionary<Transform, Mesh>(); // Store individual meshes
 
     void Start()
     {
-        fogMesh = new Mesh();
-        fogOfWarPlane.GetComponent<MeshFilter>().mesh = fogMesh;
+        // Create a fog of war object for each player
+        foreach (Transform player in players)
+        {
+            GameObject fogObject = Instantiate(fogOfWarPrefab);
+            fogObject.transform.SetParent(player, false); // Set as a child of the player without changing its local transform
+            fogObject.transform.localPosition = Vector3.zero; // Center the fog of war object at the player's local origin
+            fogObject.GetComponent<MeshFilter>().mesh = new Mesh();
+            playerMeshes[player] = fogObject.GetComponent<MeshFilter>().mesh;
+        }
     }
 
     void LateUpdate()
     {
-        GenerateFogOfWarMesh();
-    }
-
-    // Gera a malha do campo de visão combinada para todos os jogadores
-    void GenerateFogOfWarMesh()
-    {
-        List<Vector3> combinedViewPoints = new List<Vector3>();
-
-        // Para cada jogador, gera os pontos de visão
         foreach (Transform player in players)
         {
-            combinedViewPoints.AddRange(CalculateViewPoints(player.position));
+            GeneratePlayerFogOfWarMesh(player);
         }
-
-        // Atualiza a malha de névoa de guerra
-        UpdateFogMesh(combinedViewPoints);
     }
 
-    // Calcula os pontos de visão para um jogador individual
+    // Generate the fog of war mesh for each player
+    void GeneratePlayerFogOfWarMesh(Transform player)
+    {
+        List<Vector3> viewPoints = CalculateViewPoints(player.position);
+        UpdateFogMesh(playerMeshes[player], viewPoints, player);
+    }
+
+    // Calculate the vision points for a player
     List<Vector3> CalculateViewPoints(Vector3 origin)
     {
         List<Vector3> viewPoints = new List<Vector3>();
@@ -55,35 +54,41 @@ public class FogOfWar : MonoBehaviour
 
             if (hit.collider != null)
             {
-                // Se houver colisão com um obstáculo, o ponto de visão é o ponto de colisão
                 viewPoints.Add(hit.point);
             }
             else
             {
-                // Caso contrário, o ponto de visão é o extremo do raio
                 viewPoints.Add(origin + dir * viewRadius);
             }
+        }
+
+        // Close the circle by adding the first point as the last one
+        if (viewPoints.Count > 0)
+        {
+            viewPoints.Add(viewPoints[0]);
         }
 
         return viewPoints;
     }
 
-    // Atualiza a malha de névoa de guerra baseada nos pontos de visão
-    void UpdateFogMesh(List<Vector3> viewPoints)
+    // Update the fog mesh for an individual player
+    void UpdateFogMesh(Mesh fogMesh, List<Vector3> viewPoints, Transform player)
     {
         fogMesh.Clear();
-        vertices = new Vector3[viewPoints.Count + 1]; // Vertices para a malha
-        triangles = new int[(viewPoints.Count - 1) * 3]; // Triângulos para a malha
+        Vector3[] vertices = new Vector3[viewPoints.Count + 1];
+        int[] triangles = new int[(viewPoints.Count - 1) * 3];
 
-        vertices[0] = Vector3.zero; // Ponto central da malha
+        // Center the mesh at the player's local origin
+        vertices[0] = Vector3.zero;
 
         for (int i = 0; i < viewPoints.Count; i++)
         {
-            Vector3 localPos = transform.InverseTransformPoint(viewPoints[i]);
-            vertices[i + 1] = localPos;
+            // Convert world-space view points to the local space of the fog object (child of the player)
+            Transform fogObject = player; // Get the fog object's transform
+            vertices[i + 1] = fogObject.InverseTransformPoint(viewPoints[i]); // Use the fog object's local space
+
             if (i < viewPoints.Count - 1)
             {
-                // Cria triângulos conectando os pontos
                 triangles[i * 3] = 0;
                 triangles[i * 3 + 1] = i + 1;
                 triangles[i * 3 + 2] = i + 2;
@@ -95,7 +100,8 @@ public class FogOfWar : MonoBehaviour
         fogMesh.RecalculateNormals();
     }
 
-    // Calcula a direção a partir de um ângulo
+
+    // Calculate direction from angle in degrees
     Vector3 DirFromAngle(float angleInDegrees)
     {
         float radians = angleInDegrees * Mathf.Deg2Rad;
