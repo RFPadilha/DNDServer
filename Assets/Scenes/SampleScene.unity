@@ -1029,7 +1029,7 @@ MonoBehaviour:
   m_Intensity: 1
   m_LightVolumeIntensity: 1
   m_LightVolumeIntensityEnabled: 0
-  m_ApplyToSortingLayers: 0000000057ddb3c99592969977bae2d8
+  m_ApplyToSortingLayers: 0000000057ddb3c99592969977bae2d8317a21b4
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -1794,7 +1794,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1395993264}
   - component: {fileID: 1395993265}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: GridManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1825,11 +1825,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 1395993263}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f5dd76dd19875a4478dc17969f5020cd, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f36a29957a80a2438e3e6da73eae857, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mapObject: {fileID: 1987330762}
-  tokenPrefab: {fileID: 7006380336000855121, guid: cc7f7e5082370ad4588d0b277392e08e, type: 3}
+  width: 4
+  height: 4
+  tilePrefab: {fileID: 2403162499662768203, guid: 710fa4c471c1e8b408173efd4470db87, type: 3}
+  mapRect: {fileID: 1987330764}
+  tileLayer:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!1 &1573499559
 GameObject:
   m_ObjectHideFlags: 0
@@ -2427,7 +2432,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.745283, g: 0.745283, b: 0.745283, a: 1}
+  m_Color: {r: 0.3018868, g: 0.3018868, b: 0.3018868, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -2485,7 +2490,7 @@ Grid:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1987330762}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CellSize: {x: 1, y: 1, z: 1}
   m_CellGap: {x: 0, y: 0, z: 0}
   m_CellLayout: 0
