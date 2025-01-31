@@ -32,10 +32,6 @@ public class Tile : MonoBehaviour
             // Change tile appearance to indicate it is unwalkable
             highlight.color = Color.red;
         }
-        else
-        {
-            highlight.color = Color.white;
-        }
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -64,29 +60,31 @@ public class Tile : MonoBehaviour
     private float CalculateLineTileOverlap(EdgeCollider2D lineCollider)
     {
         // Get the bounds of this tile (assuming it's a quad/rectangular)
-        Bounds tileBounds = GetComponent<Collider2D>().bounds;
+        Bounds tileBounds = GetComponent<BoxCollider2D>().bounds;
 
         // Iterate through the points in the EdgeCollider2D
         float totalSegmentLength = 0f;
         float insideLength = 0f;
-
-        for (int i = 0; i < lineCollider.pointCount - 1; i++)
+        if (lineCollider != null)
         {
-            Vector2 pointA = lineCollider.points[i];
-            Vector2 pointB = lineCollider.points[i + 1];
-
-            float segmentLength = Vector2.Distance(pointA, pointB);
-            totalSegmentLength += segmentLength;
-
-            // Check if this segment intersects with the tile bounds
-            if (tileBounds.IntersectRay(new Ray(pointA, pointB - pointA)))
+            for (int i = 0; i < lineCollider.pointCount - 1; i++)
             {
-                insideLength += segmentLength;
-            }
-        }
+                Vector2 pointA = lineCollider.points[i];
+                Vector2 pointB = lineCollider.points[i + 1];
 
+                float segmentLength = Vector2.Distance(pointA, pointB);
+                totalSegmentLength += segmentLength;
+
+                // Check if this segment intersects with the tile bounds
+                if (tileBounds.IntersectRay(new Ray(pointA, pointB - pointA)))
+                {
+                    insideLength += segmentLength;
+                }
+            }
+            return insideLength / totalSegmentLength;
+        }
+        else return 0;
         // Return the ratio of the length inside the tile to the total segment length
-        return insideLength / totalSegmentLength;
     }
 }
 

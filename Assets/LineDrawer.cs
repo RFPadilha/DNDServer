@@ -9,6 +9,12 @@ public class LineDrawer : MonoBehaviour
     private LineRenderer currentLineRenderer;
     private List<Vector2> points = new List<Vector2>();
     private bool isDrawing = false;
+    private ToolManager toolManager;
+
+    private void Start()
+    {
+        toolManager = FindObjectOfType<ToolManager>();
+    }
 
     void Update()
     {
@@ -21,17 +27,20 @@ public class LineDrawer : MonoBehaviour
         // Verifica se o usuário está clicando com o botão esquerdo para adicionar pontos
         if (Input.GetMouseButtonDown(0))
         {
-            if (!isDrawing)
+            if (toolManager.currentMode == ToolManager.Mode.Drawing)
             {
-                // Inicia uma nova linha com o primeiro clique
-                StartNewLine();
-            }
-            else
-            {
-                // Adiciona o ponto final ou outro ponto se a tecla Shift estiver pressionada
-                Vector2 mousePos = mainCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, mainCamera.nearClipPlane));
-                mousePos = new Vector3(mousePos.x, mousePos.y, 0f);
-                AddPoint(mousePos);
+                if (!isDrawing)
+                {
+                    // Inicia uma nova linha com o primeiro clique
+                    StartNewLine();
+                }
+                else
+                {
+                    // Adiciona o ponto final ou outro ponto se a tecla Shift estiver pressionada
+                    Vector2 mousePos = mainCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, mainCamera.nearClipPlane));
+                    mousePos = new Vector3(mousePos.x, mousePos.y, 0f);
+                    AddPoint(mousePos);
+                }
             }
         }
 
