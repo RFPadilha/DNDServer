@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Grid : MonoBehaviour
 {
-    [SerializeField] private int width, height;
+    [SerializeField] public int width, height;
     [SerializeField] private GameObject tilePrefab;
     [SerializeField] RectTransform mapRect;
 

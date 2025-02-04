@@ -7,7 +7,7 @@ public class Token : MonoBehaviour
     private int row, col; // Grid position
     private bool isDragging = false;
     private Vector2 originalPosition;
-
+    public Vector2 newPosition;
     private Camera mainCamera;
     private Grid grid;
     private ToolManager toolManager;
@@ -17,6 +17,7 @@ public class Token : MonoBehaviour
         mainCamera = Camera.main;
         grid = FindObjectOfType<Grid>(); // Assuming there's only one grid in the scene
         toolManager = FindObjectOfType<ToolManager>(); // Reference to the mode manager
+        newPosition = originalPosition;
     }
 
     private void OnMouseDown()
@@ -48,6 +49,7 @@ public class Token : MonoBehaviour
             // Snap the token to the nearest grid tile
             Vector2 snappedPosition = SnapToGrid(transform.position);
             transform.position = snappedPosition;
+            newPosition = snappedPosition;
         }
     }
 
